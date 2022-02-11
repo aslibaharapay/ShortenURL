@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+  mysql-docker-container:
+    image: mysql:8.0
+    environment:
+    - MYSQL_ROOT_PASSWORD=root
+    - MYSQL_DATABASE=shortenurldb
+    ports:
+      - "3306:3306"
+
+  springboot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: on-failure
+    image: asli/shortenurlapi
+    ports:
+      - "8443:8443"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-docker-container:3306/shortenurldb?useSSL=false
+    depends_on:
+      - mysql-docker-container
+    links:
+      - mysql-docker-container
+
